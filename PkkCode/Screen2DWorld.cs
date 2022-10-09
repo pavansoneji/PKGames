@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PkkCode
-{
+namespace PkkCode {
     public class Screen2DWorld : MonoBehaviour {
         public static void setWallsOnTheScreen(float wallThickness, Transform parent, Sprite wallSprite) {
             Dictionary<string, Transform> walls = new Dictionary<string, Transform>();
@@ -17,8 +16,8 @@ namespace PkkCode
             Vector2 cameraPos = Camera.main.transform.position;
             walls["TOP"].position = new Vector2(cameraPos.x, cameraPos.y + screenSize.y - (walls["TOP"].localScale.y * 2.0f));
             walls["BOTTOM"].position = new Vector2(cameraPos.x, cameraPos.y - screenSize.y - (walls["BOTTOM"].localScale.y * -2.0f));
-            walls["RIGHT"].position = new Vector2(cameraPos.x + screenSize.x - (walls["RIGHT"].localScale.x * 2.0f), cameraPos.y);
-            walls["LEFT"].position = new Vector2(cameraPos.x - screenSize.x + (walls["LEFT"].localScale.x * 2.0f), cameraPos.y);
+            walls["RIGHT"].position = new Vector2(cameraPos.x + screenSize.x - (walls["RIGHT"].localScale.x * -2.0f), cameraPos.y);
+            walls["LEFT"].position = new Vector2(cameraPos.x - screenSize.x + (walls["LEFT"].localScale.x * -2.0f), cameraPos.y);
         }
 
         private static void setWallsCollider(Dictionary<string, Transform> walls, Vector2 screenSize, float wallThickness, Transform parent, Sprite wallSprite) {
@@ -26,22 +25,21 @@ namespace PkkCode
                 // add collider
                 wall.Value.gameObject.AddComponent<BoxCollider2D>();
                 //Not adding the sprite on the left and right wall
-                if(wall.Key != "LEFT" && wall.Key != "RIGHT")
+                if (wall.Key != "LEFT" && wall.Key != "RIGHT")
                     wall.Value.gameObject.AddComponent<SpriteRenderer>().sprite = wallSprite;
-                
+
                 wall.Value.name = wall.Key + "Wall";
                 wall.Value.parent = parent;
-                
+                Debug.LogFormat("PK >>> SCREEN SIZE X: {0} - Y: {1}", screenSize.x, screenSize.y);
                 if (wall.Key == "LEFT" || wall.Key == "RIGHT") {
-                    wall.Value.localScale = new Vector2(wallThickness, screenSize.y * 1.5f);
+                    wall.Value.localScale = new Vector2(wallThickness + 1, screenSize.y * 2);
                 } else {
-                    wall.Value.localScale = new Vector2(screenSize.x * 1.833f, wallThickness);
+                    wall.Value.localScale = new Vector2(screenSize.x * 2, wallThickness);
                 }
             }
         }
 
-        private static Vector2 getScreenRatio()
-        {
+        private static Vector2 getScreenRatio() {
             Vector2 screenRatio;
             screenRatio.x = Vector2.Distance(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)),
                 Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0))) * 0.5f;
@@ -50,8 +48,7 @@ namespace PkkCode
             return screenRatio;
         }
 
-        private static void addWallsGameObjectInWallsDictionary(Dictionary<string, Transform> walls)
-        {
+        private static void addWallsGameObjectInWallsDictionary(Dictionary<string, Transform> walls) {
             walls.Add("TOP", new GameObject().transform);
             walls.Add("BOTTOM", new GameObject().transform);
             walls.Add("LEFT", new GameObject().transform);
